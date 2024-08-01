@@ -1,6 +1,9 @@
 package hu.kaszabi.pooltoy;
 
 import com.mojang.logging.LogUtils;
+
+import hu.kaszabi.pooltoy.item.ModCreativeModTabs;
+import hu.kaszabi.pooltoy.item.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.food.FoodProperties;
@@ -32,13 +35,17 @@ import org.slf4j.Logger;
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(PoolToyMod.MODID)
 public class PoolToyMod {
-    // Define mod id in a common place for everything to reference
+
     public static final String MODID = "pooltoy";
-    // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public PoolToyMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        ModCreativeModTabs.register(modEventBus);
+
+        ModItems.register(modEventBus);
+
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
         modEventBus.addListener(this::addCreative);
@@ -50,7 +57,9 @@ public class PoolToyMod {
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            event.accept(ModItems.TESTITEM);
+        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
